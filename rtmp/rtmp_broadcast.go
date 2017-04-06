@@ -1,11 +1,11 @@
 package rtmp
 
 import (
-	"../config"
-	"../util"
+	//"../config"
+	//"../util"
 	"fmt"
 	//"strings"
-	"os"
+	//"os"
 	"sync"
 	"time"
 )
@@ -129,7 +129,7 @@ func (b *Broadcast) start() {
 
 					// write file
 					if b.publisher.astreamToFile {
-						err = b.publisher.WriteAudio(nil, amsg.Clone(), RTMP_FILE_TYPE_HLS_TS)
+						err := b.publisher.WriteAudio(nil, amsg.Clone(), RTMP_FILE_TYPE_HLS_TS)
 						if err != nil {
 							// handler error
 							fmt.Println("wirte audio file error :", err)
@@ -147,7 +147,7 @@ func (b *Broadcast) start() {
 
 					// write file
 					if b.publisher.vstreamToFile {
-						err = b.publisher.WriteVideo(nil, vmsg.Clone(), RTMP_FILE_TYPE_HLS_TS)
+						err := b.publisher.WriteVideo(nil, vmsg.Clone(), RTMP_FILE_TYPE_HLS_TS)
 						if err != nil {
 							// handler error
 							fmt.Println("wirte video file error :", err)
