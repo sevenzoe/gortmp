@@ -69,12 +69,13 @@ go run main.go
 
     具体的收/发消息函数.所有服务器接收到的消息或者要发送给客户端的消息,都是在这里实现的.
     
-    recvMessage() : 接收所有发送给服务器的消息,具体实现是readChunk().
-    readChunk() : rtmp发送消息是以Chunk的形式的,因此这里是读取所有Chunk,从而知道是什么消息.
-    readChunkStreamID() : 读取Chunk Stream ID.
-    readChunkType() : 读Chunk Type.
-    sendMessage() : 发送消息给客户端.具体实现writeMessage().
-    writeMessage() : 具体实现发送消息给客户端.
+    >* recvMessage() : 接收所有发送给服务器的消息,具体实现是readChunk().
+    >* readChunk() : rtmp发送消息是以Chunk的形式的,因此这里是读取所有Chunk,从而知道是什么消息.
+    >* readChunkStreamID() : 读取Chunk Stream ID.
+    >* readChunkType() : 读Chunk Type.
+    >* sendMessage() : 发送消息给客户端.具体实现writeMessage().
+    >* writeMessage() : 具体实现发送消息给客户端.
+    
     
 4. rtmp_amf.go
 
@@ -108,11 +109,11 @@ go run main.go
 
     [NetConnection](http://help.adobe.com/zh_CN/FlashPlatform/reference/actionscript/3/flash/net/NetStream.html)
     
-    SendAudio() : 发送发布者音频给订阅者.
-    SendVideo() : 发送发布者视频给订阅者.
-    WriteAudio() : 将发布者音频写成文件.
-    WriteVideo() : 将发布者视频写成文件.
-    msgLoopProc() : 消息循环处理函数.所有的消息一开始都集中在这里,然后会去到具体的处理函数中.
+    >* SendAudio() : 发送发布者音频给订阅者.
+    >* SendVideo() : 发送发布者视频给订阅者.
+    >* WriteAudio() : 将发布者音频写成文件.
+    >* WriteVideo() : 将发布者视频写成文件.
+    >* msgLoopProc() : 消息循环处理函数.所有的消息一开始都集中在这里,然后会去到具体的处理函数中.
 
 12. rtmp_packet.go
 
@@ -124,9 +125,16 @@ go run main.go
     
     所有发布/订阅的流都在这里.
     
-    例如 : 客户端推送一个流上来,假设这个流的名字为"myapp/mystream"那么我们简单的把"myapp/mystream"这个流标记为**发布者**并将其放入广播中.如果这个时候发现有拉流的情况,也即是有**订阅者**去订阅"myapp/mystream"这个流,那么我们就会从**发布者**中取出数据,发送给**订阅者**.
+    例如 :
+    
+    1. push : 客户端推送一个流上来,假设这个流的名字为"myapp/mystream"那么我们简单的把"myapp/mystream"这个流标记为**发布者**并将其放入广播中.
+    
+    2. pull : 如果这个时候发现有拉流的情况,也即是有**订阅者**去订阅"myapp/mystream"这个流,那么我们就会从**发布者**中取出数据,发送给**订阅者**.
+    
+    具体如下 :
     
     发布者 : ffmpeg -i xxxx -f rtmp://ip/myapp/mystream
+    
     订阅者 : ffplay -i rtmp://ip/myapp/mystream
     
     
