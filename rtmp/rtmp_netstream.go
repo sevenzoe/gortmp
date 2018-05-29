@@ -62,7 +62,8 @@ type RtmpNetStream struct {
 	vstreamToFile  bool               // 是否可以将视频流保存为文件
 	astreamToFile  bool               // 是否可以将音频流保存为文件
 	broadcast      *Broadcast         // Broadcast, 装载着需要广播的对象.(也即是具体的发布者)
-	total_duration uint32             // media total duration 存放音频或者视频的时间戳累加.就是一个绝对时间戳. 当前绝对时间戳 = 上一个绝对时间戳 + 当前相对时间戳
+	audio_duration uint32             // media audio duration 存放音频或者视频的时间戳累加.就是一个绝对时间戳. 当前绝对时间戳 = 上一个绝对时间戳 + 当前相对时间戳
+	video_duration uint32             // media video duration 存放音频或者视频的时间戳累加.就是一个绝对时间戳. 当前绝对时间戳 = 上一个绝对时间戳 + 当前相对时间戳
 	vsend_time     uint32             // 上一个视频的绝对时间戳
 	asend_time     uint32             // 上一个音频的绝对时间戳
 	closed         bool               // 是否关闭
@@ -626,11 +627,11 @@ func (s *RtmpNetStream) msgLoopProc() {
 func audioMessageHandle(s *RtmpNetStream, audio *AudioMessage) {
 	pkt := new(AVPacket)
 	if audio.RtmpHeader.ChunkMessgaeHeader.Timestamp == 0xffffff {
-		s.total_duration += audio.RtmpHeader.ChunkExtendedTimestamp.ExtendTimestamp
-		pkt.Timestamp = s.total_duration
+		s.audio_duration += audio.RtmpHeader.ChunkExtendedTimestamp.ExtendTimestamp
+		pkt.Timestamp = s.audio_duration
 	} else {
-		s.total_duration += audio.RtmpHeader.ChunkMessgaeHeader.Timestamp // 绝对时间戳
-		pkt.Timestamp = s.total_duration                                  // 当前时间戳(用绝对时间戳做当前音频包的时间戳)
+		s.audio_duration += audio.RtmpHeader.ChunkMessgaeHeader.Timestamp // 绝对时间戳
+		pkt.Timestamp = s.audio_duration                                  // 当前时间戳(用绝对时间戳做当前音频包的时间戳)
 	}
 
 	//fmt.Println("recv audio time stamp:", pkt.Timestamp)
@@ -654,11 +655,11 @@ func audioMessageHandle(s *RtmpNetStream, audio *AudioMessage) {
 func videoMessageHandle(s *RtmpNetStream, video *VideoMessage) {
 	pkt := new(AVPacket)
 	if video.RtmpHeader.ChunkMessgaeHeader.Timestamp == 0xffffff {
-		s.total_duration += video.RtmpHeader.ChunkExtendedTimestamp.ExtendTimestamp
-		pkt.Timestamp = s.total_duration
+		s.video_duration += video.RtmpHeader.ChunkExtendedTimestamp.ExtendTimestamp
+		pkt.Timestamp = s.video_duration
 	} else {
-		s.total_duration += video.RtmpHeader.ChunkMessgaeHeader.Timestamp
-		pkt.Timestamp = s.total_duration
+		s.video_duration += video.RtmpHeader.ChunkMessgaeHeader.Timestamp
+		pkt.Timestamp = s.video_duration
 	}
 
 	pkt.Type = video.RtmpHeader.ChunkMessgaeHeader.MessageTypeID
