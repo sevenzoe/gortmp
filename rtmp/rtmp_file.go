@@ -274,7 +274,9 @@ func rtmpVideoPacketSplitNaluAndAppendAudSPSPPS(video *AVPacket, avc *avformat.A
 		// }
 
 		// 7-9, ignore, @see: ngx_rtmp_hls_video
+		// ignore, prevIndex update.
 		if nalu_type >= 7 && nalu_type <= 9 {
+			prevIndex = prevIndex + naluSize + length
 			continue
 		}
 
